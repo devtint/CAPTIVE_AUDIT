@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAPTIVE AUDIT — Captive Portal Security Toolkit</title>
+  <meta name="description" content="Step-by-step guide to run and analyze captive portal security audits on Termux. Includes a JSON report analyzer with visual results.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    CAPTIVE AUDIT
+  </a>
+  <div class="nav-links">
+    <a href="#guide" data-en="Guide" data-mm="လမ်းညွှန်">Guide</a>
+    <a href="#analyzer" data-en="Analyzer" data-mm="ခွဲခြမ်းစိတ်ဖြာ">Analyzer</a>
+    <button class="btn btn-secondary" style="padding:6px 14px;font-size:13px;" id="lang-toggle" onclick="toggleLang()">🇲🇲 Myanmar</button>
+    <a href="https://github.com/devtint/CAPTIVE_AUDIT" target="_blank" class="btn btn-github" style="padding:8px 16px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+  <div class="hero-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span data-en="Security Audit Toolkit" data-mm="လုံခြုံရေး စစ်ဆေးကိရိယာ">Security Audit Toolkit</span>
+  </div>
+  <h1 data-en="Captive Portal <span>Security Audit</span>" data-mm="Captive Portal <span>လုံခြုံရေး စစ်ဆေးချက်</span>">Captive Portal <span>Security Audit</span></h1>
+  <p data-en="Run security audits on your own captive portals directly from your Android device using Termux. Analyze results with the built-in JSON viewer." data-mm="Termux ကို အသုံးပြု၍ သင့် Android ဖုန်းမှ captive portal လုံခြုံရေးကို စစ်ဆေးပါ။ JSON viewer ဖြင့် ရလဒ်များကို ကြည့်ရှုနိုင်ပါသည်။">Run security audits on your own captive portals directly from your Android device using Termux. Analyze results with the built-in JSON viewer.</p>
+  <div class="hero-actions">
+    <a href="#guide" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      <span data-en="Get Started" data-mm="စတင်ရန်">Get Started</span>
+    </a>
+    <a href="#analyzer" class="btn btn-secondary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4h-4z"/></svg>
+      <span data-en="Analyze Report" data-mm="ရလဒ် ကြည့်ရန်">Analyze Report</span>
+    </a>
+    <a href="https://t.me/BadCodeWriter" target="_blank" class="btn btn-tg">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      @BadCodeWriter
+    </a>
+  </div>
+</section>
+
+<!-- ═══ GUIDE ═══ -->
+<section class="section" id="guide">
+  <h2 class="section-title" data-en="Step-by-Step Guide" data-mm="အဆင့်ဆင့် လမ်းညွှန်">Step-by-Step Guide</h2>
+  <p class="section-sub" data-en="Run security audits on your own captive portal from Termux on Android." data-mm="Android ပေါ်မှ Termux ကို အသုံးပြု၍ သင့် captive portal ကို လုံခြုံရေး စစ်ဆေးပါ။">Run security audits on your own captive portal from Termux on Android.</p>
+
+  <div class="warning-banner">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div><strong data-en="Disclaimer:" data-mm="သတိပေးချက်:">Disclaimer:</strong> <span data-en="Only run this on portals you OWN or have written permission to test. Unauthorized use is illegal." data-mm="သင်ပိုင်ဆိုင်သော portal များကိုသာ စစ်ဆေးပါ။ ခွင့်ပြုချက်မရှိဘဲ အသုံးပြုခြင်းသည် တရားမဝင်ပါ။">Only run this on portals you OWN or have written permission to test. Unauthorized use is illegal.</span></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar" id="guide-tabs">
+    <button class="tab-btn active" data-tab="tab-audit" id="tab-audit-btn" data-en="Security Audit" data-mm="လုံခြုံရေး စစ်ဆေးချက်">Security Audit</button>
+    <button class="tab-btn" data-tab="tab-turbo" id="tab-turbo-btn" data-en="Turbo Engine" data-mm="Turbo Engine">Turbo Engine</button>
+  </div>
+
+  <!-- TAB 1: Security Audit -->
+  <div class="tab-content active" id="tab-audit">
+    <div class="card">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 data-en="Install Termux" data-mm="Termux ထည့်သွင်းပါ">Install Termux</h3>
+        <p data-en="Download Termux from F-Droid (recommended) — not Google Play." data-mm="F-Droid မှ Termux ကို ဒေါင်းလုဒ်လုပ်ပါ (အကြံပြုသည်) — Google Play မဟုတ်ပါ။">Download Termux from F-Droid (recommended) — not Google Play.</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>https://f-droid.org/en/packages/com.termux/</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 data-en="Update Packages" data-mm="Package များ အပ်ဒိတ်လုပ်ပါ">Update Packages</h3>
+        <p data-en="Open Termux and update all system packages first." data-mm="Termux ဖွင့်ပြီး package များကို အရင်အပ်ဒိတ်လုပ်ပါ။">Open Termux and update all system packages first.</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>pkg update -y && pkg upgrade -y</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 data-en="Install Python" data-mm="Python ထည့်သွင်းပါ">Install Python</h3>
+        <p data-en="Install Python and pip package manager." data-mm="Python နှင့် pip ကို ထည့်သွင်းပါ။">Install Python and pip package manager.</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>pkg install python -y</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3 data-en="Install Dependencies" data-mm="လိုအပ်သော Package များ ထည့်ပါ">Install Dependencies</h3>
+        <p data-en="Install the required Python packages." data-mm="လိုအပ်သော Python package များကို ထည့်သွင်းပါ။">Install the required Python packages.</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>pip install requests urllib3</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <h3 data-en="Download the Scripts" data-mm="Script ဖိုင်များ ဒေါင်းလုဒ်လုပ်ရန်">Download the Scripts</h3>
+        <p data-en="Option A: Clone with git (recommended)" data-mm="နည်းလမ်း A: git ဖြင့် clone လုပ်ပါ (အကြံပြုသည်)">Option A: Clone with git (recommended)</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>pkg install git -y
+git clone https://github.com/devtint/CAPTIVE_AUDIT.git
+cd CAPTIVE_AUDIT</code></div>
+        <p style="margin-top:16px;" data-en="Option B: Download directly (no git needed)" data-mm="နည်းလမ်း B: တိုက်ရိုက် ဒေါင်းလုဒ်လုပ်ပါ (git မလိုပါ)">Option B: Download directly (no git needed)</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>mkdir CAPTIVE_AUDIT && cd CAPTIVE_AUDIT
+curl -LO https://raw.githubusercontent.com/devtint/CAPTIVE_AUDIT/main/captive_portal_audit.py
+curl -LO https://raw.githubusercontent.com/devtint/CAPTIVE_AUDIT/main/starlink.py</code></div>
+        <p style="margin-top:8px;font-size:13px;color:var(--text-tertiary);" data-en="If curl is not installed: pkg install curl -y" data-mm="curl မရှိပါက: pkg install curl -y">If curl is not installed: <code style="font-family:'DM Mono',monospace;background:rgba(0,0,0,0.06);padding:2px 6px;border-radius:4px;">pkg install curl -y</code></p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <h3 data-en="Connect to Captive Portal WiFi" data-mm="Captive Portal WiFi ချိတ်ဆက်ပါ">Connect to Captive Portal WiFi</h3>
+        <p data-en="Go to your Android WiFi settings and connect to the captive portal network you want to audit." data-mm="Android WiFi ဆက်တင်သို့သွားပြီး စစ်ဆေးလိုသည့် portal ကွန်ရက်သို့ ချိတ်ဆက်ပါ။">Go to your Android WiFi settings and connect to the captive portal network you want to audit. <strong data-en="Do NOT accept the portal login yet." data-mm="Portal login ကို မလက်ခံပါနှင့်။">Do NOT accept the portal login yet.</strong></p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">7</div>
+        <h3 data-en="Run the Audit Script" data-mm="Audit Script ကို လုပ်ဆောင်ပါ">Run the Audit Script</h3>
+        <p data-en="Execute the captive portal security audit tool." data-mm="Captive portal လုံခြုံရေး စစ်ဆေးကိရိယာကို လုပ်ဆောင်ပါ။">Execute the captive portal security audit tool.</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>python captive_portal_audit.py</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">8</div>
+        <h3 data-en="Follow the Interactive Menu" data-mm="Menu အတိုင်း လိုက်နာလုပ်ပါ">Follow the Interactive Menu</h3>
+        <p data-en="The script will guide you through:" data-mm="Script က အဆင့်ဆင့် လမ်းညွှန်မည်:">The script will guide you through:</p>
+        <ul style="color:var(--text-secondary); margin-left: 20px; margin-top: 8px;">
+          <li>Select your language (English / Myanmar)</li>
+          <li>Enter the portal URL (e.g. <code style="font-family:'DM Mono',monospace; background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px;">http://192.168.1.1</code>)</li>
+          <li>Optionally enter gateway host/IP and port</li>
+          <li>The audit runs 7 security checks automatically</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <div class="step-num">9</div>
+        <h3 data-en="Get the JSON Report" data-mm="JSON အစီရင်ခံစာ ရယူပါ">Get the JSON Report</h3>
+        <p data-en="After the audit, a JSON report file is saved. You can view or upload it to the Analyzer below." data-mm="စစ်ဆေးပြီးနောက် JSON အစီရင်ခံစာ သိမ်းဆည်းပါမည်။ အောက် Analyzer တွင် တင်နိုင်ပါသည်။">After the audit, a JSON report file is saved. You can view or upload it to the Analyzer below.</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>cat captive_portal_audit_report.json</code></div>
+        <p style="margin-top: 8px;">To copy the file to your phone storage:</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>cp captive_portal_audit_report.json /sdcard/Download/</code></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB 2: Turbo Engine -->
+  <div class="tab-content" id="tab-turbo">
+    <div class="card">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 data-en="Complete Steps 1–5 from Security Audit" data-mm="Security Audit မှ အဆင့် (၁)–(၅) ကို ပြီးသားပါ">Complete Steps 1–5 from Security Audit</h3>
+        <p data-en="Make sure Termux, Python, dependencies, and the repository are already set up." data-mm="Termux, Python, dependencies နှင့် repository အဆင်သင့်နေပြီဖြစ်ကြောင်း သေချာပါ။">Make sure Termux, Python, dependencies, and the repository are already set up.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 data-en="Connect to Captive Portal WiFi" data-mm="Captive Portal WiFi ချိတ်ဆက်ပါ">Connect to Captive Portal WiFi</h3>
+        <p data-en="Connect to the portal WiFi network. The Turbo Engine will auto-detect the captive portal." data-mm="Portal WiFi ကွန်ရက်သို့ ချိတ်ဆက်ပါ။ Turbo Engine က captive portal ကို အလိုအလျောက် ရှာဖွေပါမည်။">Connect to the portal WiFi network. The Turbo Engine will auto-detect the captive portal.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 data-en="Run the Turbo Engine" data-mm="Turbo Engine ကို လုပ်ဆောင်ပါ">Run the Turbo Engine</h3>
+        <p data-en="Launch the Turbo Network Engine script." data-mm="Turbo Network Engine script ကို လုပ်ဆောင်ပါ။">Launch the Turbo Network Engine script.</p>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>cd CAPTIVE_AUDIT
+python starlink.py</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3 data-en="Select Option 1 from Menu" data-mm="Menu မှ ရွေးချယ်မှု (၁) ကို ရွေးပါ">Select Option 1 from Menu</h3>
+        <p data-en="Choose [1] Starlink Hack to start the Turbo Network Engine." data-mm="Turbo Network Engine စတင်ရန် [1] Starlink Hack ကို ရွေးပါ။">Choose <strong>[1] Starlink Hack</strong> to start the Turbo Network Engine.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <h3 data-en="How It Works" data-mm="အလုပ်လုပ်ပုံ">How It Works</h3>
+        <p data-en="The engine will automatically:" data-mm="Engine က အလိုအလျောက် လုပ်ဆောင်မည်:">The engine will automatically:</p>
+        <ul style="color:var(--text-secondary); margin-left: 20px; margin-top: 8px;">
+          <li>Detect the captive portal redirect</li>
+          <li>Capture the session ID from the portal</li>
+          <li>Probe the voucher API endpoint</li>
+          <li>Launch multi-threaded auth pings to the gateway</li>
+          <li>Monitor internet connectivity in real-time</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <h3 data-en="Stop the Engine" data-mm="Engine ရပ်ရန်">Stop the Engine</h3>
+        <p data-en="Press Ctrl + C to stop and return to the menu." data-mm="ရပ်ပြီး menu သို့ ပြန်သွားရန် Ctrl + C နှိပ်ပါ။">Press <code style="font-family:'DM Mono',monospace; background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px;">Ctrl + C</code> to stop and return to the menu.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ANALYZER ═══ -->
+<section class="section" id="analyzer">
+  <h2 class="section-title" data-en="Report Analyzer" data-mm="ရလဒ် ခွဲခြမ်းစိတ်ဖြာ">Report Analyzer</h2>
+  <p class="section-sub" data-en="Import your captive_portal_audit_report.json to visualize results." data-mm="သင့် captive_portal_audit_report.json ကို တင်ပြီး ရလဒ်များကို ကြည့်ရှုပါ။">Import your <code style="font-family:'DM Mono',monospace; background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px;">captive_portal_audit_report.json</code> to visualize results.</p>
+
+  <div class="card">
+    <div class="analyzer-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <p><strong>Click to upload</strong> or drag &amp; drop your JSON report</p>
+      <p style="font-size: 12px; margin-top: 8px; color: var(--text-tertiary);">Supports captive_portal_audit_report.json</p>
+      <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFile(this.files[0])">
+    </div>
+
+    <div id="analyzer-results"></div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="https://github.com/devtint/CAPTIVE_AUDIT" target="_blank">GitHub</a>
+    <a href="https://t.me/BadCodeWriter" target="_blank">Telegram</a>
+    <a href="#guide">Guide</a>
+    <a href="#analyzer">Analyzer</a>
+  </div>
+  <p>&copy; 2026 CAPTIVE AUDIT by <a href="https://t.me/BadCodeWriter" target="_blank">@BadCodeWriter</a>. For authorized security testing only.</p>
+</footer>
+
+<script>
+/* ═══ TABS ═══ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ═══ COPY CODE ═══ */
+function copyCode(btn) {
+  const code = btn.parentElement.querySelector('code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+/* ═══ DRAG & DROP ═══ */
+const dropZone = document.getElementById('drop-zone');
+['dragenter','dragover'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.add('dragover'); }));
+['dragleave','drop'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('dragover'); }));
+dropZone.addEventListener('drop', ev => { if(ev.dataTransfer.files.length) handleFile(ev.dataTransfer.files[0]); });
+
+/* ═══ FILE HANDLER ═══ */
+function handleFile(file) {
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      renderResults(data);
+    } catch(err) {
+      alert('Invalid JSON file. Please upload a valid audit report.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ═══ RENDER RESULTS ═══ */
+function renderResults(data) {
+  const container = document.getElementById('analyzer-results');
+  const s = data.summary || {};
+  const findings = data.findings || [];
+  const recos = data.recommendations || [];
+  const passCount = s.pass || 0;
+  const warnCount = s.warn || 0;
+  const failCount = s.fail || 0;
+  const infoCount = findings.filter(f => f.level === 'INFO').length;
+
+  let html = `
+    <div class="meta-grid">
+      <div class="meta-item"><label>Target</label><p>${esc(data.target || 'N/A')}</p></div>
+      <div class="meta-item"><label>Language</label><p>${esc(data.language || 'N/A')}</p></div>
+      <div class="meta-item"><label>Timestamp</label><p>${esc(data.timestamp || 'N/A')}</p></div>
+    </div>
+
+    <div class="result-header">
+      <div class="stat-card stat-pass"><div class="num">${passCount}</div><div class="label">Passed</div></div>
+      <div class="stat-card stat-warn"><div class="num">${warnCount}</div><div class="label">Warnings</div></div>
+      <div class="stat-card stat-fail"><div class="num">${failCount}</div><div class="label">Failed</div></div>
+      <div class="stat-card stat-info"><div class="num">${infoCount}</div><div class="label">Info</div></div>
+    </div>
+
+    <h3 style="font-size:var(--font-lg); font-weight:600; margin-bottom:var(--space-md);">Findings</h3>
+  `;
+
+  findings.forEach(f => {
+    html += `
+      <div class="finding-item level-${esc(f.level)}">
+        <span class="finding-badge badge-${esc(f.level)}">${esc(f.level)}</span>
+        <span class="finding-id">${esc(f.id)}</span>
+        <div class="finding-msg">
+          ${esc(f.message)}
+          ${f.detail ? `<div class="finding-detail">${esc(f.detail)}</div>` : ''}
+        </div>
+      </div>`;
+  });
+
+  if(recos.length) {
+    html += `<h3 style="font-size:var(--font-lg); font-weight:600; margin:var(--space-xl) 0 var(--space-md);">Hardening Recommendations</h3>`;
+    recos.forEach(r => {
+      html += `
+        <div class="reco-item">
+          <div class="reco-num">${esc(r.id)}</div>
+          <div>
+            <div class="reco-title">${esc(r.title)}</div>
+            <div class="reco-detail">${esc(r.detail)}</div>
+          </div>
+        </div>`;
+    });
+  }
+
+  container.innerHTML = html;
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = String(str);
+  return d.innerHTML;
+}
+
+/* ═══ LANGUAGE TOGGLE ═══ */
+let currentLang = 'en';
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'mm' : 'en';
+  const btn = document.getElementById('lang-toggle');
+  btn.innerHTML = currentLang === 'en' ? '🇲🇲 Myanmar' : '🇬🇧 English';
+  document.querySelectorAll('[data-en][data-mm]').forEach(el => {
+    const val = el.getAttribute('data-' + currentLang);
+    if (val) el.innerHTML = val;
+  });
+}
+</script>
+</body>
+</html>
